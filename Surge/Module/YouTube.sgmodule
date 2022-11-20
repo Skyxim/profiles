@@ -1,0 +1,17 @@
+#!name=YouTube Ad
+#!desc=修改IP送中去广告，会影响评论等功能,需要不支持UDP节点，或者添加规则  AND,((DEST-PORT,443),(PROTOCOL,UDP)),REJECT
+
+
+[URL Rewrite]
+(^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(videoplayback|dclk_video_ads)).+)&ip=.+?(&.*) $1&ip=202.133.207.46$3 header
+(^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(videoplayback|dclk_video_ads)).+)\/ip\/.+?(\/.*) $1/ip/202.133.207.46$3 header
+(^https?:\/\/[\w-]+\.googlevideo\.com\/.+)\/ip\/.+?(\/.+\/ctier\/[A-Z])(.+) $1/ip/202.133.207.46$2$3 header
+(^https?:\/\/[\w-]+\.googlevideo\.com\/.+)&ip=.+?(&.+&ctier=[A-Z])(.+) $1&ip=202.133.207.46$2$3 header
+
+
+^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads - reject
+^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) - reject
+^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext - reject
+
+[MITM]
+hostname = %APPEND% -redirector*.googlevideo.com,*.googlevideo.com,www.youtube.com,s.youtube.com

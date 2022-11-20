@@ -1,0 +1,7 @@
+#包含NoByDa国区解锁tf限制和tf域名规则，需要指定插件规则，遇到tf域名污染可以指定为自己的代理策略组，无污染可指定Direct
+[Rule]
+DOMAIN-SUFFIX,testflight.apple.com
+[Mitm]
+hostname=testflight.apple.com
+[Script]
+http-request ^https?:\/\/testflight\.apple\.com\/v\d\/accounts\/.+?\/install$ ,requires-body=true,max-size=1048576, timeout=20, tag=TF软件更新,script-path=https://gist.githubusercontent.com/NobyDa/9be418b93afc5e9c8a8f4d28ae403cf2/raw/TF_Download.js,enabled=true

@@ -1,0 +1,8 @@
+hostname = *.googlevideo.com,www.youtube.com,s.youtube.com
+(^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback)).+)&ip=.+?(.*) url 302 $1&ip=202.133.207.46$3 
+(^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+)&ip=.+?(&ctier=[A-Z].+) url 302 $1&ip=202.133.207.46$2 
+(^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+)(&ctier=[A-Z].+?)&ip=.+?(&?.*) url 302 $1$2&ip=202.133.207.46$3
+
+^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads url reject
+^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) url reject
+^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext url reject

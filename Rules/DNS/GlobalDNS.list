@@ -1,0 +1,12 @@
+DOMAIN,dns.google
+DOMAIN,one.one.one.one
+DOMAIN,doh.opendns.com
+DOMAIN,doh.familyshield.opendns.com
+DOMAIN,dns.adguard.com
+DOMAIN,dns-family.adguard.com
+DOMAIN,dns-unfiltered.adguard.com
+DOMAIN,doh.dns.apple.com
+IP-CIDR,1.1.1.1/32,no-resolve
+IP-CIDR,1.0.0.1/32,no-resolve
+IP-CIDR,8.8.8.8/32,no-resolve
+IP-CIDR,8.8.4.4/32,no-resolve

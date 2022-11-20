@@ -1,0 +1,10 @@
+#!name=YouTube region select
+#!desc=选择YouTube地区，可以通过选择CN达到去广告效果
+
+[Panel]
+YouTubeSelect = script-name=YouTubeSelect, update-interval=3600
+
+
+[Script]
+YouTubeSelect = type=generic,script-path=https://github.com/Skyxim/Profile/raw/main/Script/YouTubeSelect.js
+YouTubeCronSelect = type=cron,cronexp=5 * * * *,control-api=1,script-path=https://github.com/Skyxim/Profile/raw/main/Script/YouTubeSelect.js

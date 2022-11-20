@@ -1,0 +1,4 @@
+# 选择YouTube地区，可以通过选择CN达到去广告效果
+
+[Script]
+cron  "5 * * * *"  script-path=https://github.com/Skyxim/Profile/raw/main/Script/YouTubeSelect.js,tag=YouTubeCronSelect

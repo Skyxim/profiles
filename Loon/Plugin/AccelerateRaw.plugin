@@ -1,0 +1,13 @@
+#重定向github的raw地址，帮助尚未完成规则订阅的进行规则下载(github相关raw在国内存在大面积dns污染和阻断，导致无法直连）
+#CDN订阅地址,三选一使用
+#https://raw.subloon.cf/AccelerateRaw.plugin
+#https://raw.subloon.cf/Skyxim/my-rule/main/AccelerateRaw/AccelerateRaw.plugin
+#https://raw.sevencdn.com/Skyxim/my-rule/main/AccelerateRaw/AccelerateRaw.plugin 
+
+[MITM]
+hostname=github.com,raw.githubusercontent.com
+[URL Rewrite]
+#(^https?:\/\/raw.githubusercontent.com)\/(.+?)\/(.+?)\/(.+?)\/(.*) https://cdn.jsdelivr.net/gh/$2/$3@$4/$5 302
+#(^https?:\/\/github.com)\/(.+?)\/(.+?)\/raw\/(.+?)\/(.*) https://cdn.jsdelivr.net/gh/$2/$3@$4/$5 302
+^https?:\/\/raw.githubusercontent.com https://raw.sevencdn.com 302
+(^https?:\/\/github.com)(\/.*\/*)\/raw(\/.*\/.*) https://raw.sevencdn.com$2$3 302
