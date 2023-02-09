@@ -1,8 +1,6 @@
 const $ = API("auto_policy", false)
 let config = {
     policies: [],
-    // httpApi: "",
-    // httpApiKey: ""
 }
 
 const isLoon = typeof $loon !== "undefined"
@@ -44,23 +42,25 @@ async function manager() {
         return
     }
 
-    let needChangeModules = {}
+    console.log(`网络信息：${JSON.stringify(network)}`)
 
-    for (let policy of config.policies.reverse()) {
+    let needChangeModules = {}
+    let needIgnorePolicy = {}
+    for (let policy of config.policies) {
         console.log("判断策略: " + policy.rule);
         if (isCellularRule(policy.rule)) {
             console.log("CELLULAR");
             if (network.wifi.ssid === null) {
                 if (isModule(policy.group)) {
                     let module = policy.group.substr("MODULE:".length).trim()
-                    if (needChangeMoudle(modules, module, policy.decision)) {
-                        if (module in needChangeModules) {
-                            continue
-                        }
-                        needChangeModules[module] = policy.decision
+                    if (!needChangeModules[module]) {
+                        needChangeModules[module] = { decision: policy.decision, filter: needChangeMoudle(modules, module, policy.decision) }
                     }
                 } else {
-                    changePolicy(policy.group, policy.decision)
+                    if (!needIgnorePolicy[policy.group]) {
+                        needIgnorePolicy[policy.group] = true
+                        changePolicy(policy.group, policy.decision)
+                    }
                 }
             }
             continue
@@ -73,14 +73,14 @@ async function manager() {
                 if (ip === network.v4.primaryRouter) {
                     if (isModule(policy.group)) {
                         let module = policy.group.substr("MODULE:".length).trim()
-                        if (needChangeMoudle(modules, module, policy.decision)) {
-                            if (module in needChangeModules) {
-                                continue
-                            }
-                            needChangeModules[module] = policy.decision
+                        if (!needChangeModules[module]) {
+                            needChangeModules[module] = { decision: policy.decision, filter: needChangeMoudle(modules, module, policy.decision) }
                         }
                     } else {
-                        changePolicy(policy.group, policy.decision)
+                        if (!needIgnorePolicy[policy.group]) {
+                            needIgnorePolicy[policy.group] = true
+                            changePolicy(policy.group, policy.decision)
+                        }
                     }
                 }
             }
@@ -93,23 +93,19 @@ async function manager() {
         if (re.test(network.wifi.ssid)) {
             if (isModule(policy.group)) {
                 let module = policy.group.substr("MODULE:".length).trim()
-                if (needChangeMoudle(modules, module, policy.decision)) {
-                    if (module in needChangeModules) {
-                        continue
-                    }
-                    needChangeModules[module] = policy.decision
+                if (!needChangeModules[module]) {
+                    needChangeModules[module] = { decision: policy.decision, filter: needChangeMoudle(modules, module, policy.decision) }
                 }
             } else {
-                changePolicy(policy.group, policy.decision)
+                if (!needIgnorePolicy[policy.group]) {
+                    needIgnorePolicy[policy.group] = true
+                    changePolicy(policy.group, policy.decision)
+                }
             }
         }
     }
 
-    console.log("change moudle " + JSON.stringify(needChangeModules))
-    console.log("keys length: " + Object.keys(needChangeModules).length)
-    if (Object.keys(needChangeModules).length !== 0) {
-        await changeModules(needChangeModules)
-    }
+    await changeModules(needChangeModules)
 }
 
 function isCellularRule(rule) {
@@ -151,7 +147,18 @@ async function getModules() {
 }
 
 async function changeModules(body) {
-    $httpAPI("POST", "/v1/modules", body, () => $done({}));
+    console.log("change moudle " + JSON.stringify(body))
+    let newBody = {}
+    for (var i in body) {
+        if (body[i].filter) {
+            newBody[i] = body[i].decision
+        }
+    }
+    if (Object.keys(newBody).length === 0) {
+        return
+    }
+
+    $httpAPI("POST", "/v1/modules", newBody, () => $done({}));
 }
 // prettier-ignore
 /*********************************** API *************************************/

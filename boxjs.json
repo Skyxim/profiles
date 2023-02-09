@@ -52,24 +52,6 @@
                     "placeholder": "",
                     "autoGrow": true,
                     "rows": 5
-                },
-                {
-                    "id": "@auto_policy.api",
-                    "name": "Surge HTTP API",
-                    "val": "",
-                    "type": "textarea",
-                    "placeholder": "",
-                    "autoGrow": true,
-                    "rows": 1
-                },
-                {
-                    "id": "@auto_policy.key",
-                    "name": "Surge HTTP API KEY",
-                    "val": "",
-                    "type": "textarea",
-                    "placeholder": "",
-                    "autoGrow": true,
-                    "rows": 1
                 }
             ]
         },
