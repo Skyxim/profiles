@@ -7,10 +7,9 @@ const isLoon = typeof $loon !== "undefined"
 const isSurge = typeof $httpClient !== "undefined" && !isLoon
 
 const policies = $.read("policies")
-config.httpApi = $.read("api")
-config.httpApiKey = $.read("key")
+
 if (policies) {
-    config.policies = JSON.parse(policies)
+    config.policies = parsePolicies(policies)
 }
 
 // get current decisions
@@ -19,7 +18,7 @@ if (isSurge) {
     groups = Object.keys($surge.selectGroupDetails().groups)
     network = $network
 } else if (isLoon) {
-    const conf = JSON.parse($config.getConfig())
+    const conf = parsePolicies($config.getConfig())
     groups = conf.all_policy_groups
     ssid = conf.ssid
 }
@@ -54,7 +53,7 @@ async function manager() {
                 if (isModule(policy.group)) {
                     let module = policy.group.substr("MODULE:".length).trim()
                     if (!needChangeModules[module]) {
-                        needChangeModules[module] = { decision: policy.decision, filter: needChangeMoudle(modules, module, policy.decision) }
+                        needChangeModules[module] = { decision: policy.enable, filter: needChangeMoudle(modules, module, policy.enable) }
                     }
                 } else {
                     if (!needIgnorePolicy[policy.group]) {
@@ -74,7 +73,7 @@ async function manager() {
                     if (isModule(policy.group)) {
                         let module = policy.group.substr("MODULE:".length).trim()
                         if (!needChangeModules[module]) {
-                            needChangeModules[module] = { decision: policy.decision, filter: needChangeMoudle(modules, module, policy.decision) }
+                            needChangeModules[module] = { decision: policy.enable, filter: needChangeMoudle(modules, module, policy.enable) }
                         }
                     } else {
                         if (!needIgnorePolicy[policy.group]) {
@@ -94,7 +93,7 @@ async function manager() {
             if (isModule(policy.group)) {
                 let module = policy.group.substr("MODULE:".length).trim()
                 if (!needChangeModules[module]) {
-                    needChangeModules[module] = { decision: policy.decision, filter: needChangeMoudle(modules, module, policy.decision) }
+                    needChangeModules[module] = { decision: policy.enable, filter: needChangeMoudle(modules, module, policy.enable) }
                 }
             } else {
                 if (!needIgnorePolicy[policy.group]) {
@@ -106,6 +105,34 @@ async function manager() {
     }
 
     await changeModules(needChangeModules)
+}
+
+function parsePolicies(argsStr) {
+    let lines = argsStr.split("\n")
+    var policies = []
+    for (var line of lines) {
+        if (line !== null && line.length > 0) {
+            try {
+                let policy = {
+                    rule: getValue(line, "rule"),
+                    group: getValue(line, "target"),
+                    enable: getValue(line, "enable") === "true",
+                    decision: getValue(line, "proxy")
+                }
+                policies.push(policy)
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+    return policies
+}
+
+function getValue(policy, key) {
+    let regStr = `\\b([\\s]*${key}[\\s]*)=(".+?"|.+?)(,|$)`
+    let re = new RegExp(regStr)
+    let result = re.exec(policy)
+    return result?result[2].replace("\"", "").trim():null
 }
 
 function isCellularRule(rule) {
