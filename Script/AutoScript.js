@@ -111,7 +111,7 @@ function parsePolicies(argsStr) {
     let lines = argsStr.split("\n")
     var policies = []
     for (var line of lines) {
-        if (line !== null && line.length > 0) {
+        if (line !== null && line.length > 0 && !line.startsWith("#")) {
             try {
                 let policy = {
                     rule: getValue(line, "rule"),
@@ -132,7 +132,7 @@ function getValue(policy, key) {
     let regStr = `\\b([\\s]*${key}[\\s]*)=(".+?"|.+?)(,|$)`
     let re = new RegExp(regStr)
     let result = re.exec(policy)
-    return result?result[2].replace("\"", "").trim():null
+    return result ? result[2].replace("\"", "").trim() : null
 }
 
 function isCellularRule(rule) {
